@@ -7,6 +7,7 @@ contract Ballot {
     string public electionName;
     string public electionDescription;
     bool public votingEnded;
+    uint256 totalVoteCounted;
 
     //Custom Type to represent single voter
     struct Voter {
@@ -23,7 +24,7 @@ contract Ballot {
     }
 
     //Winning proposal
-    Proposal public winnerProposal;
+    Proposal public winningProposal;
     uint256 public winningProposalIndex;
 
     //Map of voters
@@ -54,9 +55,9 @@ contract Ballot {
         }
     }
 
-    function _giveRightToVote(address _voter) public {
+    function _giveRightToVote(address _sender, address _voter) public {
         require(
-            msg.sender == chairPerson,
+            _sender == chairPerson,
             "Only chairperson can give right to vote."
         );
         require(!voters[_voter].voted, "The voter already voted.");
@@ -65,6 +66,7 @@ contract Ballot {
     }
 
     function _giveVote(uint256 _proposal, address _voterAddress) public {
+        require(!votingEnded, "Votting ended");
         Voter storage sender = voters[_voterAddress];
         require(sender.weight != 0, "Has no right to vote");
         require(!sender.voted, "Already voted.");
@@ -75,6 +77,7 @@ contract Ballot {
         // this will throw automatically and revert all
         // changes.
         proposals[_proposal].voteCount += sender.weight;
+        totalVoteCounted += 1;
     }
 
     function _winningProposal() public view returns (uint256 winningProposal_) {
@@ -95,6 +98,26 @@ contract Ballot {
         );
         votingEnded = true;
         winningProposalIndex = _winningProposal();
-        winnerProposal = proposals[winningProposalIndex];
+        winningProposal = proposals[winningProposalIndex];
+    }
+
+    function _getName() public view returns (string memory){
+        return electionName;
+    }
+
+    function _getDescription() public view returns (string memory){
+        return electionDescription;
+    }
+
+    function _isVotingEnded() public view returns (bool){
+        return votingEnded;
+    }
+
+    function _getWinningProposalName() public view returns (string memory){
+        return winningProposal.name;
+    }
+
+    function _getTotalVoteCounted() public view returns (uint){
+        return totalVoteCounted;
     }
 }
