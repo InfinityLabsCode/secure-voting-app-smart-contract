@@ -13,10 +13,18 @@ async function main() {
 
   const lockedAmount = hre.ethers.utils.parseEther("1");
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const SecureVote = await hre.ethers.getContractFactory("SecureVote");
+  const secureVote = await SecureVote.deploy(unlockTime, { value: lockedAmount });
 
-  await lock.deployed();
+  await secureVote.deployed();
+  console.log("SecureVote deployed to:", secureVote.address);
+
+  const Ballot = await hre.ethers.getContractFactory("Ballot");
+  const ballot = await Ballot.deploy(unlockTime, { value: lockedAmount });
+
+  await ballot.deployed();
+  console.log("Ballot deployed to:", ballot.address);
+
 
   console.log(
     `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
