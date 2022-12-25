@@ -1,38 +1,56 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
+/// @title Ballot: Core function for developing Ballot smart contract
+/// @author InfinityLabsCode
+/// @notice This smart contract contains all functionality for developing Ballot smart contract
+
 contract Ballot {
-    //The walletAddress that deployed the smart contract
+    ///@dev the user that can create new ballot and other administrator thing
     address public chairPerson;
+    ///@dev name of the election
     string public electionName;
+    ///@dev description of the created election
     string public electionDescription;
+    ///@dev current state voting
     bool public votingEnded;
-    uint256 totalVoteCounted;
+    ///@dev total vote counted for this election
+    uint256 public totalVoteCounted;
 
-    //Custom Type to represent single voter
+    ///@dev structure of voter for participate in election
     struct Voter {
-        uint256 weight; // weight is accumulated by delegation
-        address delegate; //The persone delegated to vote
-        uint256 voteFor; //Index of the voted proposal
-        bool voted; //Whether voter already voted or not
+        ///@dev voter weight of voting for one election
+        uint256 weight;
+        ///@dev voter voted for this proposal , it holds an index
+        uint256 voteFor;
+        ///@dev voter voted in this election or not
+        bool voted;
     }
 
-    //Custom Type to represent one proposal
+    ///@dev structure of proposal for election
     struct Proposal {
-        string name; //The name of the proposal
-        uint256 voteCount; //Total vote accumalted for this proposal
+        ///@dev name of the proposal
+        string name;
+        ///@dev total vote accuired by this proposal
+        uint256 voteCount;
     }
 
-    //Winning proposal
+    ///@dev winning proposal after election ended
     Proposal public winningProposal;
+    ///@dev index of winning proposal after election ended
     uint256 public winningProposalIndex;
 
-    //Map of voters
+    ///@dev map of addresses and the Voter information
     mapping(address => Voter) voters;
 
-    //List of proposals
+    ///@dev array of proposed proposals
     Proposal[] public proposals;
 
+    ///@dev Ballot contract constractor
+    ///@param _owner walletAddress for the chairperson
+    ///@param _electionName the name of this election
+    ///@param _electionDescription the description of this election
+    ///@param _proposalsName list of proposals for this election
     constructor(
         address _owner,
         string memory _electionName,
@@ -45,15 +63,15 @@ contract Ballot {
         voters[chairPerson].weight = 1;
         votingEnded = false;
 
-        //Initiate All the proposals
-        initateProposals(_proposalsName);
-    }
-
-    function initateProposals(string[] memory _proposalsName) public {
         for (uint256 i = 0; i < _proposalsName.length; i++) {
             proposals.push(Proposal({name: _proposalsName[i], voteCount: 0}));
         }
     }
+
+    ///@dev give right to vote to a voter by the chairperson
+    ///@notice Only the chairperson wallet address can add gift give right to vote
+    ///@param  _sender the walletAddress called this function
+    ///@param _voter the voterAddress which will get the right to vote
 
     function _giveRightToVote(address _sender, address _voter) public {
         require(
@@ -64,6 +82,11 @@ contract Ballot {
         require(voters[_voter].weight == 0);
         voters[_voter].weight = 1;
     }
+
+    ///@dev give vote to a specific proposal
+    ///@notice voter can vote only if the voting is not ended
+    ///@param  _proposal the proposal which the voter wants to voted
+    ///@param _voterAddress the address of voter who wants to vote
 
     function _giveVote(uint256 _proposal, address _voterAddress) public {
         require(!votingEnded, "Votting ended");
@@ -80,6 +103,10 @@ contract Ballot {
         totalVoteCounted += 1;
     }
 
+    ///@dev get the winning proposal for this election
+    ///@notice voting needs to ended by the chariperson for announce the winning proposal
+    ///@return  winningProposal_ the index of winning proposal
+
     function _winningProposal() public view returns (uint256 winningProposal_) {
         require(votingEnded, "Votting is still processing");
         uint256 winningVoteCount = 0;
@@ -91,6 +118,9 @@ contract Ballot {
         }
     }
 
+    ///@dev ending this perticular election
+    ///@notice only the chairperson can call this function
+    ///@param  _sender the walletAddress that calls this method
     function _endingVoting(address _sender) external {
         require(
             _sender == chairPerson,
@@ -101,23 +131,33 @@ contract Ballot {
         winningProposal = proposals[winningProposalIndex];
     }
 
-    function _getName() public view returns (string memory){
+    ///@dev getter function for electionName
+    ///@return  electionName name of the election
+    function _getName() public view returns (string memory) {
         return electionName;
     }
 
-    function _getDescription() public view returns (string memory){
+    ///@dev getter function for electionDescription
+    ///@return  electionDescription description of the election
+    function _getDescription() public view returns (string memory) {
         return electionDescription;
     }
 
-    function _isVotingEnded() public view returns (bool){
+    ///@dev getter function for voting ended or not
+    ///@return  votingEnded current status of this voting
+    function _isVotingEnded() public view returns (bool) {
         return votingEnded;
     }
 
-    function _getWinningProposalName() public view returns (string memory){
+    ///@dev getter function for get winning proposal
+    ///@return winningProposal name of the winning proposal
+    function _getWinningProposalName() public view returns (string memory) {
         return winningProposal.name;
     }
 
-    function _getTotalVoteCounted() public view returns (uint){
+    ///@dev getter function for get total vote counted
+    ///@return totalVoteCounted total vote counted for this election
+    function _getTotalVoteCounted() public view returns (uint256) {
         return totalVoteCounted;
     }
 }
