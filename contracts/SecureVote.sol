@@ -1,16 +1,33 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Ballot.sol";
 
 /// @title SecureVote: Core function for developing multiple Ballot/Election smart contract
 /// @author InfinityLabsCode
 /// @notice This smart contract contains all functionality for developing SecureVote smart contract
 
-contract SecureVote is Ownable {
+contract SecureVote {
+    ///@dev owner of the smart contract
+    address public owner;
     ///@dev Array of Ballots
     Ballot[] BallotArray;
+
+    ///@dev set the owner who is deploying the smart contract
+    constructor() {
+        // Set the transaction sender as the owner of the contract.
+        owner = msg.sender;
+    }
+
+
+    ///@dev modifier for to check only owner or not
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        // Underscore is a special character only used inside
+        // a function modifier and it tells Solidity to
+        // execute the rest of the code.
+        _;
+    }
 
     ///@dev structure of SingleElectionStatistics for showing statistics
     struct SingleElectionStatistics {
@@ -71,7 +88,7 @@ contract SecureVote is Ownable {
     }
 
     ///@dev making statistics for all ballot/election
-    ///@return StatisticsArray with all the information of all election
+    ///@return StatisticsArray with all the information of all
     function getStatisticsOfAllVote()
         public
         view
