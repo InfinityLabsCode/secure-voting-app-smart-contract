@@ -19,7 +19,6 @@ contract SecureVote {
         owner = msg.sender;
     }
 
-
     ///@dev modifier for to check only owner or not
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -98,14 +97,15 @@ contract SecureVote {
             memory results = new SingleElectionStatistics[](BallotArray.length);
 
         for (uint256 i = 0; i < BallotArray.length; i++) {
-            results[i] = SingleElectionStatistics({
-                name: BallotArray[i]._getName(),
-                description: BallotArray[i]._getDescription(),
-                voteCounted: BallotArray[i]._getTotalVoteCounted(),
-                voteEnded: BallotArray[i]._isVotingEnded(),
-                winningProposalName: BallotArray[i]._getWinningProposalName()
-            });
+            results[i] = SingleElectionStatistics(
+                BallotArray[i]._getName(),
+                BallotArray[i]._getDescription(),
+                BallotArray[i]._getTotalVoteCounted(),
+                BallotArray[i]._isVotingEnded(),
+                BallotArray[i]._getWinningProposalName()
+            );
         }
+        
         return results;
     }
 }

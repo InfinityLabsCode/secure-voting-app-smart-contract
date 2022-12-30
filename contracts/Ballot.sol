@@ -79,7 +79,7 @@ contract Ballot {
             "Only chairperson can give right to vote."
         );
         require(!voters[_voter].voted, "The voter already voted.");
-        require(voters[_voter].weight == 0);
+        require(voters[_voter].weight == 0 , "Already given the right to vote.");
         voters[_voter].weight = 1;
     }
 
@@ -89,9 +89,9 @@ contract Ballot {
     ///@param _voterAddress the address of voter who wants to vote
 
     function _giveVote(uint256 _proposal, address _voterAddress) public {
-        require(!votingEnded, "Votting ended");
+        require(!votingEnded, "Votting ended.");
         Voter storage sender = voters[_voterAddress];
-        require(sender.weight != 0, "Has no right to vote");
+        require(sender.weight != 0, "Has no right to vote.");
         require(!sender.voted, "Already voted.");
         sender.voted = true;
         sender.voteFor = _proposal;
