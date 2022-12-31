@@ -159,6 +159,8 @@ describe("SecureVote", function () {
           await secureVote.connect(owner).endingVoting(0);
           await secureVote.connect(owner).endingVoting(1);
 
+          console.log(await secureVote.connect(owner).getStatisticsOfAllVote());
+
           await secureVote.connect(owner).getStatisticsOfAllVote();
         });
       })

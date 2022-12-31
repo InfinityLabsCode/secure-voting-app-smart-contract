@@ -35,7 +35,7 @@ contract SecureVote {
         ///@dev description for the election
         string description;
         ///@dev vote counted for the election
-        uint256 voteCounted;
+        uint voteCounted;
         ///@dev voting status
         bool voteEnded;
         ///@dev name of the winning proposal
@@ -63,47 +63,48 @@ contract SecureVote {
     ///@dev call the specific election _giveRightToVote method
     ///@param _index index of the election
     ///@param  _voter the address of the voter
-    function giveRightToVote(uint256 _index, address _voter) public {
+    function giveRightToVote(uint _index, address _voter) public {
         BallotArray[_index]._giveRightToVote(msg.sender, _voter);
     }
 
     ///@dev call the specific election giveVote method
     ///@param _index index of the election
     ///@param  _proposal the proposal voted for
-    function giveVote(uint256 _index, uint256 _proposal) public {
+    function giveVote(uint _index, uint _proposal) public {
         BallotArray[_index]._giveVote(_proposal, msg.sender);
     }
 
     ///@dev call the specific election _endingVoting method
     ///@param _index index of the election
-    function endingVoting(uint256 _index) public {
+    function endingVoting(uint _index) public {
         BallotArray[_index]._endingVoting(msg.sender);
     }
 
     ///@dev call the specific election _winningProposal method
     ///@return winningProposalIndex winning proposal index
-    function winningProposal(uint256 _index) public view returns (uint256) {
+    function winningProposal(uint _index) public view returns (uint) {
         return BallotArray[_index]._winningProposal();
     }
 
     ///@dev making statistics for all ballot/election
-    ///@return StatisticsArray with all the information of all
+    ///@return results with all the information of all
     function getStatisticsOfAllVote()
         public
         view
-        returns (SingleElectionStatistics[] memory)
+        returns (SingleElectionStatistics[] memory )
     {
-        SingleElectionStatistics[]
-            memory results = new SingleElectionStatistics[](BallotArray.length);
 
-        for (uint256 i = 0; i < BallotArray.length; i++) {
-            results[i] = SingleElectionStatistics(
+        SingleElectionStatistics[] memory results = new SingleElectionStatistics[](BallotArray.length);
+
+        for (uint i = 0; i < BallotArray.length; i++) {
+            SingleElectionStatistics memory temp = SingleElectionStatistics(
                 BallotArray[i]._getName(),
                 BallotArray[i]._getDescription(),
                 BallotArray[i]._getTotalVoteCounted(),
                 BallotArray[i]._isVotingEnded(),
                 BallotArray[i]._getWinningProposalName()
             );
+            results[i] = temp;
         }
         
         return results;

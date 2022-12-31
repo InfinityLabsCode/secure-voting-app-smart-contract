@@ -15,14 +15,14 @@ contract Ballot {
     ///@dev current state voting
     bool public votingEnded;
     ///@dev total vote counted for this election
-    uint256 public totalVoteCounted;
+    uint public totalVoteCounted;
 
     ///@dev structure of voter for participate in election
     struct Voter {
         ///@dev voter weight of voting for one election
-        uint256 weight;
+        uint weight;
         ///@dev voter voted for this proposal , it holds an index
-        uint256 voteFor;
+        uint voteFor;
         ///@dev voter voted in this election or not
         bool voted;
     }
@@ -32,13 +32,13 @@ contract Ballot {
         ///@dev name of the proposal
         string name;
         ///@dev total vote accuired by this proposal
-        uint256 voteCount;
+        uint voteCount;
     }
 
     ///@dev winning proposal after election ended
     Proposal public winningProposal;
     ///@dev index of winning proposal after election ended
-    uint256 public winningProposalIndex;
+    uint public winningProposalIndex;
 
     ///@dev map of addresses and the Voter information
     mapping(address => Voter) voters;
@@ -63,7 +63,7 @@ contract Ballot {
         voters[chairPerson].weight = 1;
         votingEnded = false;
 
-        for (uint256 i = 0; i < _proposalsName.length; i++) {
+        for (uint i = 0; i < _proposalsName.length; i++) {
             proposals.push(Proposal({name: _proposalsName[i], voteCount: 0}));
         }
     }
@@ -88,7 +88,7 @@ contract Ballot {
     ///@param  _proposal the proposal which the voter wants to voted
     ///@param _voterAddress the address of voter who wants to vote
 
-    function _giveVote(uint256 _proposal, address _voterAddress) public {
+    function _giveVote(uint _proposal, address _voterAddress) public {
         require(!votingEnded, "Votting ended.");
         Voter storage sender = voters[_voterAddress];
         require(sender.weight != 0, "Has no right to vote.");
@@ -107,10 +107,10 @@ contract Ballot {
     ///@notice voting needs to ended by the chariperson for announce the winning proposal
     ///@return  winningProposal_ the index of winning proposal
 
-    function _winningProposal() public view returns (uint256 winningProposal_) {
+    function _winningProposal() public view returns (uint winningProposal_) {
         require(votingEnded, "Votting is still processing");
-        uint256 winningVoteCount = 0;
-        for (uint256 p = 0; p < proposals.length; p++) {
+        uint winningVoteCount = 0;
+        for (uint p = 0; p < proposals.length; p++) {
             if (proposals[p].voteCount > winningVoteCount) {
                 winningVoteCount = proposals[p].voteCount;
                 winningProposal_ = p;
@@ -157,7 +157,7 @@ contract Ballot {
 
     ///@dev getter function for get total vote counted
     ///@return totalVoteCounted total vote counted for this election
-    function _getTotalVoteCounted() public view returns (uint256) {
+    function _getTotalVoteCounted() public view returns (uint) {
         return totalVoteCounted;
     }
 }
