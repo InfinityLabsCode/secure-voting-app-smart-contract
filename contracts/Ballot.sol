@@ -16,6 +16,8 @@ contract Ballot {
     bool public votingEnded;
     ///@dev total vote counted for this election
     uint public totalVoteCounted;
+    ///@dev name of all the proposals
+    string [] proposalNames;
 
     ///@dev structure of voter for participate in election
     struct Voter {
@@ -62,6 +64,7 @@ contract Ballot {
         chairPerson = _owner;
         voters[chairPerson].weight = 1;
         votingEnded = false;
+        proposalNames = _proposalsName;
 
         for (uint i = 0; i < _proposalsName.length; i++) {
             proposals.push(Proposal({name: _proposalsName[i], voteCount: 0}));
@@ -159,5 +162,11 @@ contract Ballot {
     ///@return totalVoteCounted total vote counted for this election
     function _getTotalVoteCounted() public view returns (uint) {
         return totalVoteCounted;
+    }
+
+    ///@dev getter function for get the proposals
+    ///@return proposalName name of the proposals
+    function _getProposalName() public view returns (string[] memory) {
+        return proposalNames;
     }
 }

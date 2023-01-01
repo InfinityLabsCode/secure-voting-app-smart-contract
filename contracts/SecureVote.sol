@@ -86,6 +86,11 @@ contract SecureVote {
         return BallotArray[_index]._winningProposal();
     }
 
+    ///@return _proposalNames name of the proposals
+    function getProposalNames(uint _index) public view returns (string[] memory) {
+        return BallotArray[_index]._getProposalName();
+    }
+
     ///@dev making statistics for all ballot/election
     ///@return results with all the information of all
     function getStatisticsOfAllVote()

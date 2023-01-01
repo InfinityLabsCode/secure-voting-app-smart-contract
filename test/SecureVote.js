@@ -139,6 +139,15 @@ describe("SecureVote", function () {
         });
       })
 
+      describe("proposalName", function () {
+        it("Return Array of proposals", async function () {
+          const { secureVote, owner, otherAccount, _electionName, _electionDescription, _proposalsName } = await loadFixture(deploySecureVoteFixture);
+          await secureVote.createNewElection(_electionName, _electionDescription, _proposalsName);
+          console.log(await secureVote.connect(owner).getProposalNames(0));
+          await secureVote.connect(owner).getProposalNames(0);
+        });
+      })
+
       describe("getStatisticsOfAllVote", function () {
         it("Return Array of Statisctics", async function () {
           const { secureVote, owner, otherAccount, _electionName, _electionDescription, _proposalsName } = await loadFixture(deploySecureVoteFixture);
